@@ -1,0 +1,533 @@
+﻿<ui:UiPage
+    x:Class="SL2Bonfire.Views.Pages.BonfirePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:SL2Bonfire.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="BonfirePage"
+    d:DataContext="{d:DesignInstance local:BonfirePage,
+                                     IsDesignTimeCreatable=False}"
+    d:DesignHeight="548"
+    d:DesignWidth="727"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    mc:Ignorable="d">
+    <!--  MAIN CONTAINER  -->
+    <Grid Margin="26,0" VerticalAlignment="Stretch">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <!--  GAME PROFILE  -->
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                Margin="0,0,0,5"
+                Content="Choose game profile" />
+            <ComboBox
+                Grid.Row="1"
+                Grid.Column="0"
+                Cursor="Hand"
+                ItemsSource="{Binding ViewModel.GameProfiles.Collection, Mode=OneWay}"
+                SelectedIndex="{Binding ViewModel.SelectedGameProfile, Mode=TwoWay}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <ui:Button
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="10,0"
+                Padding="6"
+                Appearance="Secondary"
+                Command="{Binding ViewModel.LoadGameProfileListCommand}"
+                Cursor="Hand"
+                FontSize="18"
+                Icon="ArrowSync16"
+                ToolTip="Refresh" />
+            <ui:SymbolIcon
+                Grid.Row="1"
+                Grid.Column="2"
+                Cursor="Help"
+                FontSize="26"
+                Foreground="{Binding ViewModel.ValidIndicator.Color}"
+                Symbol="{Binding ViewModel.ValidIndicator.Symbol}"
+                ToolTip="{Binding ViewModel.ValidIndicator.StateTooltipCaption}"
+                Visibility="{Binding ViewModel.ValidIndicator.Visibility}" />
+        </Grid>
+        <!--  MAIN CONTAINER BODY  -->
+        <Grid Grid.Row="2" Margin="0,20,0,0">
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ViewModel.ValidIndicator.IsValid}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ViewModel.ValidIndicator.IsValid}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="11*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="9*" />
+            </Grid.ColumnDefinitions>
+            <!--  ACTIONS SECTION  -->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <!--  ACTIONS HEADER  -->
+                <Grid Grid.Row="0" Margin="0,0,12,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        Grid.Column="0"
+                        FontSize="16"
+                        Text="Available Actions" />
+                    <!--  UNICODE SWITCH  -->
+                    <ui:ToggleSwitch
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        Content="Unicode"
+                        Cursor="Hand"
+                        IsChecked="{Binding ViewModel.IsUnicode}" />
+                </Grid>
+                <!--  ACTIONS BODY  -->
+                <!--  PACKING & UNPACKING  -->
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <StackPanel
+                        Grid.Row="0"
+                        Margin="0,0,0,5"
+                        Orientation="Horizontal">
+                        <Label Content="Packing &amp; Unpacking" />
+                        <ui:SymbolIcon
+                            Margin="2"
+                            Cursor="Help"
+                            FontSize="13"
+                            Symbol="QuestionCircle16"
+                            ToolTip="Colored buttons are the default ones" />
+                    </StackPanel>
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <!--  UNPACK & DECRYPT + PACK & ENCRYPT ROW  -->
+                        <Grid
+                            Grid.Row="0"
+                            Margin="0,0,0,10"
+                            Visibility="{Binding ViewModel.UnpackingExtendedButtonsVisibility}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ui:Button
+                                Grid.Column="0"
+                                HorizontalAlignment="Stretch"
+                                Appearance="{Binding ViewModel.AppearanceUnpackingExtended}"
+                                Command="{Binding ViewModel.UnpackAndDecryptCommand}"
+                                Content="Unpack &amp; decrypt"
+                                Cursor="Hand"
+                                FontSize="13"
+                                Icon="Box16"
+                                IsEnabled="True" />
+                            <ui:Button
+                                Grid.Column="2"
+                                HorizontalAlignment="Stretch"
+                                Appearance="{Binding ViewModel.AppearanceUnpackingExtended}"
+                                Command="{Binding ViewModel.PackAndEncryptCommand}"
+                                Content="Pack &amp; encrypt"
+                                Cursor="Hand"
+                                FontSize="13"
+                                Icon="BoxMultiple20"
+                                IsEnabled="{Binding ViewModel.ValidIndicator3.IsValid}" />
+                        </Grid>
+                        <!--  UNPACK & PACK ROW  -->
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ui:Button
+                                Grid.Column="0"
+                                HorizontalAlignment="Stretch"
+                                Appearance="{Binding ViewModel.AppearanceUnpacking}"
+                                Command="{Binding ViewModel.UnpackOnlyCommand}"
+                                Content="Unpack"
+                                Cursor="Hand"
+                                FontSize="13"
+                                Icon="Box16"
+                                IsEnabled="True" />
+                            <ui:Button
+                                Grid.Column="2"
+                                HorizontalAlignment="Stretch"
+                                Appearance="{Binding ViewModel.AppearanceUnpacking}"
+                                Command="{Binding ViewModel.PackOnlyCommand}"
+                                Content="Pack"
+                                Cursor="Hand"
+                                FontSize="13"
+                                Icon="BoxMultiple20"
+                                IsEnabled="{Binding ViewModel.ValidIndicator3.IsValid}" />
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <!--  MISCELLANEOUS SECTION  -->
+                <Separator Grid.Row="2" Margin="0,5" />
+                <Grid Grid.Row="3" Grid.Column="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Row="0" Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <!--  LOADING UNPACKED FILES & MEMORY PATCHING SECTION  -->
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                Margin="0,0,0,5"
+                                Content="Loading unpacked files" />
+                            <ui:Button
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                HorizontalAlignment="Stretch"
+                                Command="{Binding ViewModel.ReloadFilesCommand}"
+                                Content="{Binding ViewModel.ValidIndicator3.StateContentCaption}"
+                                Cursor="Hand"
+                                FontSize="13"
+                                Icon="ArrowDownload16"
+                                IsEnabled="True" />
+                            <ui:SymbolIcon
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="10,0,0,0"
+                                Cursor="Help"
+                                FontSize="26"
+                                Foreground="{Binding ViewModel.ValidIndicator3.Color}"
+                                Symbol="{Binding ViewModel.ValidIndicator3.Symbol}"
+                                ToolTip="{Binding ViewModel.ValidIndicator3.StateTooltipCaption}"
+                                Visibility="{Binding ViewModel.ValidIndicator3.Visibility}" />
+                        </Grid>
+                        <!--  PATCHING MEMORY SECTION  -->
+                        <StackPanel Grid.Row="1">
+                            <StackPanel.Style>
+                                <Style TargetType="{x:Type StackPanel}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ViewModel.IsMemoryPatchingAllowed}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding ViewModel.IsMemoryPatchingAllowed}" Value="False">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <Separator Margin="0,5" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    Margin="0,0,0,5"
+                                    Content="Patching Memory" />
+                                <ui:Button
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding ViewModel.PatchGameMemoryCommand}"
+                                    Content="{Binding ViewModel.ValidIndicator4.StateContentCaption}"
+                                    Cursor="Hand"
+                                    FontSize="13"
+                                    Icon="Patch20"
+                                    IsEnabled="True" />
+                                <ui:SymbolIcon
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Margin="10,0,0,0"
+                                    Cursor="Help"
+                                    FontSize="26"
+                                    Foreground="{Binding ViewModel.ValidIndicator4.Color}"
+                                    Symbol="{Binding ViewModel.ValidIndicator4.Symbol}"
+                                    ToolTip="{Binding ViewModel.ValidIndicator4.StateTooltipCaption}"
+                                    Visibility="{Binding ViewModel.ValidIndicator4.Visibility}" />
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                    <!--  DIRECTORY SHORTCUTS SECTION  -->
+                    <Separator Grid.Column="1" Margin="5,0" />
+                    <Grid Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Label
+                            Grid.Row="0"
+                            Margin="0,0,0,5"
+                            Content="Directory shortcuts" />
+                        <Grid Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="10" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="10" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <ui:Button
+                                Grid.Row="0"
+                                HorizontalAlignment="Stretch"
+                                Command="{Binding ViewModel.OpenShortcut1Command}"
+                                Content="Unpacked Files"
+                                Cursor="Hand"
+                                FontSize="13"
+                                Icon="FolderOpen20"
+                                IsEnabled="True" />
+                            <ui:Button
+                                Grid.Row="2"
+                                HorizontalAlignment="Stretch"
+                                Command="{Binding ViewModel.OpenShortcut2Command}"
+                                Content="Packed File"
+                                Cursor="Hand"
+                                FontSize="13"
+                                Icon="FolderOpen20"
+                                IsEnabled="True" />
+                            <ui:Button
+                                Grid.Row="4"
+                                HorizontalAlignment="Stretch"
+                                Command="{Binding ViewModel.OpenShortcut3Command}"
+                                Content="Save game data location"
+                                Cursor="Hand"
+                                FontSize="13"
+                                Icon="FolderOpen20"
+                                IsEnabled="True" />
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <!--  STEAM_ID RESIGN SECTION  -->
+                <StackPanel
+                    Grid.Row="4"
+                    HorizontalAlignment="Stretch"
+                    Orientation="Vertical">
+                    <StackPanel.Style>
+                        <Style TargetType="{x:Type StackPanel}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ViewModel.IsResignAllowed}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ViewModel.IsResignAllowed}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                    <Separator Margin="0,5" />
+                    <Label Margin="0,0,0,5" Content="SteamID64 Resigning" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ui:TextBox
+                            Grid.Column="0"
+                            Cursor="IBeam"
+                            MaxLength="17"
+                            PlaceholderText="f.ex. 76561123456789011"
+                            Text="{Binding ViewModel.SteamIdInternal, UpdateSourceTrigger=PropertyChanged}" />
+                        <ui:SymbolIcon
+                            Grid.Column="1"
+                            Margin="10,0"
+                            Cursor="Help"
+                            FontSize="26"
+                            Foreground="{Binding ViewModel.ValidIndicator2.Color}"
+                            Symbol="{Binding ViewModel.ValidIndicator2.Symbol}"
+                            ToolTip="{Binding ViewModel.ValidIndicator2.StateTooltipCaption}"
+                            Visibility="{Binding ViewModel.ValidIndicator2.Visibility}" />
+                        <ui:Button
+                            Grid.Column="2"
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding ViewModel.ResignCommand}"
+                            Content="Resign"
+                            Cursor="Hand"
+                            FontSize="13"
+                            Icon="Edit16"
+                            IsEnabled="{Binding ViewModel.IsResignButtonActive}" />
+                    </Grid>
+                    <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
+                        <TextBlock Text="Loaded saves belongs to: " />
+                        <TextBlock
+                            x:Name="SteamIdExternalTb"
+                            FontWeight="Bold"
+                            Foreground="#ffcb4c"
+                            Text="{Binding ViewModel.SteamIdExternal}" />
+                        <ui:Button
+                            Padding="2"
+                            Appearance="Transparent"
+                            Command="{Binding ViewModel.CopyToClipboardCommand}"
+                            CommandParameter="{Binding Text, ElementName=SteamIdExternalTb, Mode=OneWay}"
+                            Cursor="Hand"
+                            FontSize="10"
+                            Icon="Copy16"
+                            ToolTip="Copy To Clipboard" />
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+            <!--  CHARACTER NAMES SECTION  -->
+            <Separator
+                Grid.Column="1"
+                Margin="5,0"
+                Visibility="{Binding Visibility, ElementName=CharNamesGrid}" />
+            <Grid
+                x:Name="CharNamesGrid"
+                Grid.Column="2"
+                Visibility="{Binding ViewModel.RenamingVisibility}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock
+                        Grid.Column="0"
+                        FontSize="16"
+                        Text="Character names" />
+                    <ui:Button
+                        Grid.Column="2"
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding ViewModel.ApplyRenamingCommand}"
+                        Content="Apply Renaming"
+                        Cursor="Hand"
+                        FontSize="13"
+                        Icon="Save20"
+                        IsEnabled="True" />
+                </Grid>
+                <ScrollViewer
+                    Grid.Row="1"
+                    Margin="0,8,0,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding ViewModel.CharacterSlots}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                        <ui:SymbolIcon
+                                            FontSize="28"
+                                            Foreground="{Binding Foreground, ElementName=CharacterNameTb}"
+                                            Opacity="{Binding Opacity, ElementName=CharacterNameTb}"
+                                            Symbol="PersonCircle20" />
+                                        <TextBlock
+                                            x:Name="CharacterNameTb"
+                                            VerticalAlignment="Bottom"
+                                            Text="{Binding ID, StringFormat=00}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="{x:Type TextBlock}">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsOccupied}" Value="True">
+                                                            <Setter Property="Foreground" Value="#ffcb4c" />
+                                                            <Setter Property="Opacity" Value="1" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsOccupied}" Value="False">
+                                                            <Setter Property="Opacity" Value="0.4" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <TextBox
+                                        Grid.Column="1"
+                                        Margin="10,0,0,0"
+                                        IsEnabled="{Binding IsOccupied}"
+                                        MaxLength="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:BonfirePage}}, Path=ViewModel.CurrentGameProfile.MaxCharacterNameLength}"
+                                        Text="{Binding CharacterName, Mode=TwoWay}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel HorizontalAlignment="Stretch" Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+        <Canvas Grid.Row="1">
+            <ui:InfoBar
+                Title="{Binding ViewModel.InfoBarFeeder.Title}"
+                Canvas.Left="110"
+                Canvas.Top="-60"
+                Width="564"
+                Padding="12"
+                FontSize="13"
+                IsClosable="False"
+                IsOpen="{Binding ViewModel.InfoBarFeeder.IsOpen}"
+                Message="{Binding ViewModel.InfoBarFeeder.Message}"
+                Severity="{Binding ViewModel.InfoBarFeeder.Severity}" />
+        </Canvas>
+    </Grid>
+</ui:UiPage>
