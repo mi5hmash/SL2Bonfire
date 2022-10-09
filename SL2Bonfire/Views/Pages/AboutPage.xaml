@@ -1,0 +1,141 @@
+﻿<ui:UiPage
+    x:Class="SL2Bonfire.Views.Pages.AboutPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:SL2Bonfire.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="AboutPage"
+    d:DataContext="{d:DesignInstance local:AboutPage,
+                                     IsDesignTimeCreatable=False}"
+    d:DesignHeight="548"
+    d:DesignWidth="727"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    mc:Ignorable="d">
+
+    <StackPanel Margin="26,0">
+        <TextBlock FontSize="13" Text="This app can unpack and create SL2 archives from/for various FromSoftware's games." />
+        <TextBlock FontSize="13" Text="It can also resign saves with your own SteamID or patch games memory to bypass SaveData ownership checks." />
+        <TextBlock FontSize="13" Text="Finally it allows you to rename your characters." />
+        <ui:InfoBar
+            Title="Warning"
+            Margin="0,5,0,0"
+            Padding="12"
+            FontSize="13"
+            IsClosable="False"
+            IsOpen="True"
+            Message="For your own safety always make backups of the original files you modify."
+            Severity="Warning" />
+        <ui:InfoBar
+            Title="Seriously"
+            Margin="0,5,0,0"
+            Padding="12"
+            FontSize="13"
+            IsClosable="False"
+            IsOpen="True"
+            Message="Do not patch game's memory while connected to the Internet or you can get banned."
+            Severity="Error" />
+        <Grid Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Image
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Width="160"
+                    Source="../../Assets/applicationIcon-256.png" />
+                <Image
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Height="160"
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Left"
+                    Source="../../Assets/staticLogo.png" />
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    VerticalAlignment="Top"
+                    Orientation="Vertical">
+                    <StackPanel Margin="0,10,0,0" Orientation="Horizontal">
+                        <TextBlock FontSize="13" Text="Version: " />
+                        <TextBlock
+                            FontSize="13"
+                            FontWeight="Bold"
+                            Text="{Binding ViewModel.AppVersion, Mode=OneWay}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontSize="13" Text="Author: " />
+                        <TextBlock
+                            FontSize="13"
+                            FontWeight="Bold"
+                            Text="Mi5hmasH" />
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Orientation="Vertical">
+                    <StackPanel Orientation="Vertical">
+                        <ui:Hyperlink
+                            Margin="0,10,0,5"
+                            Content="My github page"
+                            Icon="Link48"
+                            NavigateUri="https://github.com/mi5hmash"
+                            ToolTip="https://github.com/mi5hmash" />
+                        <ui:Hyperlink
+                            Content="App source code"
+                            Icon="Link48"
+                            NavigateUri="nuget.org/packages/WPF-UI/" />
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+            <Separator Grid.Column="1" Margin="5,0" />
+            <StackPanel Grid.Column="2">
+                <TextBlock
+                    FontSize="20"
+                    FontWeight="Medium"
+                    Text="Dependencies &amp; References" />
+                <ui:Hyperlink
+                    Margin="0,10,0,0"
+                    Content="WPF-UI"
+                    Icon="Link48"
+                    NavigateUri="https://github.com/lepoco/wpfui"
+                    ToolTip="https://github.com/lepoco/wpfui" />
+                <ui:Hyperlink
+                    Margin="0,5,0,0"
+                    Content="memory.dll"
+                    Icon="Link48"
+                    NavigateUri="https://newagesoldier.com/memory.dll/"
+                    ToolTip="https://newagesoldier.com/memory.dll/" />
+                <ui:Hyperlink
+                    Margin="0,5,0,0"
+                    Content="CommunityToolkit"
+                    Icon="Link48"
+                    NavigateUri="https://github.com/CommunityToolkit/dotnet/"
+                    ToolTip="https://github.com/CommunityToolkit/dotnet/" />
+                <TextBlock
+                    Margin="0,5,0,0"
+                    FontSize="13"
+                    Text="Some classes are based on tremwil's repo:" />
+                <ui:Hyperlink
+                    Margin="0,5,0,0"
+                    Content="DS3SaveUnpacker"
+                    Icon="Link48"
+                    NavigateUri="https://github.com/tremwil/DS3SaveUnpacker"
+                    ToolTip="https://github.com/tremwil/DS3SaveUnpacker" />
+            </StackPanel>
+        </Grid>
+    </StackPanel>
+</ui:UiPage>
