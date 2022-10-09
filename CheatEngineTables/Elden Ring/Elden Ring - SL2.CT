@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="42">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>104162</ID>
+      <Description>"*** ELDEN RING ***"</Description>
+      <Options moHideChildren="1"/>
+      <Color>65D7FC</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>8</ID>
+      <Description>"[ACTIVATE ME]"</Description>
+      <Options moHideChildren="1" moDeactivateChildrenAsWell="1"/>
+      <Color>C7AFE2</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+  --VARIABLES
+  local procName = "EldenRing"
+  local processName = procName..".exe"
+  local ceLatestVer = 7.4 -- latest CE version number known to this cheat table.
+  clr0 = 0xc7afe2
+  clr1 = 0xc2ff93
+  local statmr = memrec.Child[0]
+
+  -- OPEN PROCESS
+  local openProc = OpenProcess(processName)
+  if not openProc then
+     messageDialog("Failed to open the '"..processName.."' process.", 1, 2)
+     memrec.Description = "[DEACTIVATE ME] Launch the '"..processName.."' process and try again."
+     memrec.Color = clr0
+     statmr.Description = "???!!!???!!!"
+     statmr.Color = clr0
+  else
+    -- GET PROCESS VERSION
+    local exePath = enumModules()[1].PathToFile
+    procVer, pvTable = getFileVersion(exePath)
+    procVer = "v"..pvTable.major.."."..pvTable.minor.."."..pvTable.release.."."..pvTable.build
+    -- SET CURRENT CONTROL DESCRIPTION
+    memrec.Description = "[ACTIVATED]"
+    memrec.Color = clr1
+    statmr.Description = procName.." "..procVer
+    statmr.Color = clr1
+  end
+
+  -- CHECK CHEAT ENGINE VERSION
+  local ceCurrentVer = getCEVersion() -- currently installed CE version number.
+  if ceCurrentVer &lt; ceLatestVer then
+     messageDialog("Your Cheat Engine software is outdated and this table could not run properly.\nPlease consider updating to the latest Cheat Engine version. Latest official public release version is avilable at https://cheatengine.org/\nYour Cheat Engine Version : "..ceCurrentVer.."\nLatest Known Public Cheat Engine Version : "..ceLatestVer,0)
+     -- CLOSE MAIN FORM
+     -- MainForm.close() -- closes MainForm Window
+  end
+
+
+[DISABLE]
+
+if syntaxcheck then return end
+
+  -- SET CURRENT CONTROL DESCRIPTION
+  memrec.Description = "[ACTIVATE ME]"
+  memrec.Color = clr0
+  -- NULLIFY ALL GLOBAL VARIABLES
+  procVer, pvTable = nil, nil
+  clr0, clr1 = nil, nil
+
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>104167</ID>
+          <Description>"???!!!???!!!"</Description>
+          <Options moHideChildren="1"/>
+          <Color>C7AFE2</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>4</ID>
+          <Description>"DISABLE STEAM_ID CHECKS"</Description>
+          <Color>7EA9C9</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : eldenring.exe
+  Version: 1.06
+  Date   : 2022-09-19
+  Author : Mi5hmasH
+}
+
+[ENABLE]
+// AOB_SCAN
+aobscanmodule(AOB_STEAMID_CHECK1,$process,48 ?? ?? ?? 49 ?? ?? 48 ?? ?? 48 ?? ?? E8 ?? ?? ?? ?? 48 ?? ?? 75 ?? B0 ?? 48)
+aobscanmodule(AOB_STEAMID_CHECK2,$process,83 ?? ?? 75 ?? E8 ?? ?? ?? ?? 48 ?? ?? ?? ?? 75 ?? 48)
+// AOB_DEFINE
+define(STEAMID_CHECK1,AOB_STEAMID_CHECK1+15) //+21
+define(STEAMID_CHECK2,AOB_STEAMID_CHECK2+0F) //+15
+// AOB_SYMBOLS
+registersymbol(AOB_STEAMID_CHECK1,AOB_STEAMID_CHECK2)
+registersymbol(STEAMID_CHECK1,STEAMID_CHECK2)
+
+// SB (storeBytes)
+alloc(SB_STEAMID_CHECK1,$2,STEAMID_CHECK1)
+alloc(SB_STEAMID_CHECK2,$2,STEAMID_CHECK2)
+// SB_SYMBOLS
+registersymbol(SB_STEAMID_CHECK1,SB_STEAMID_CHECK2)
+// SB_ASSIGN
+SB_STEAMID_CHECK1:
+readmem(STEAMID_CHECK1,2)
+SB_STEAMID_CHECK2:
+readmem(STEAMID_CHECK2,2)
+
+STEAMID_CHECK1:
+  db 90 90
+
+STEAMID_CHECK2:
+  db 90 90
+
+[DISABLE]
+
+STEAMID_CHECK1:
+  readmem(SB_STEAMID_CHECK1,2) // db 75 12
+
+STEAMID_CHECK2:
+  readmem(SB_STEAMID_CHECK2,2) // db 75 14
+
+unregistersymbol(*)
+dealloc(*)
+
+{ ORIGINAL CODE
+// STEAMID_CHECK1
+eldenring.exe.text+8013CD: 48 8B 55 48           - mov rdx,[rbp+48]
+eldenring.exe.text+8013D1: 89 5C 24 08           - mov [rsp+08],ebx
+eldenring.exe.text+8013D5: 48 89 74 24 10        - mov [rsp+10],rsi
+eldenring.exe.text+8013DA: 57                    - push rdi
+eldenring.exe.text+8013DB: 48 83 EC 20           - sub rsp,20
+eldenring.exe.text+8013DF: 49 8B F8              - mov rdi,r8
+eldenring.exe.text+8013E2: 48 8B F2              - mov rsi,rdx
+eldenring.exe.text+8013E5: 48 8B D9              - mov rbx,rcx
+eldenring.exe.text+8013E8: E8 B3 F3 5F 00        - call eldenring.exe.text+E007A0
+eldenring.exe.text+8013ED: 48 3B D8              - cmp rbx,rax
+// ---------- INJECTING HERE ----------
+eldenring.exe.text+8013F0: 75 12                 - jne eldenring.exe.text+801404
+// ---------- DONE INJECTING  ----------
+eldenring.exe.text+8013F2: B0 01                 - mov al,01
+eldenring.exe.text+8013F4: 48 8B 5C 24 30        - mov rbx,[rsp+30]
+eldenring.exe.text+8013F9: 48 8B 74 24 38        - mov rsi,[rsp+38]
+eldenring.exe.text+8013FE: 48 83 C4 20           - add rsp,20
+eldenring.exe.text+801402: 5F                    - pop rdi
+eldenring.exe.text+801403: C3                    - ret
+
+// STEAMID_CHECK2
+eldenring.exe.text+2541C3: 41 B8 08 00 00 00           - mov r8d,00000008
+eldenring.exe.text+2541C9: 48 8B 02                    - mov rax,[rdx]
+eldenring.exe.text+2541CC: 49 8B C9                    - mov rcx,r9
+eldenring.exe.text+2541CF: 48 8D 54 24 30              - lea rdx,[rsp+30]
+eldenring.exe.text+2541D4: 48 C7 44 24 30 00 00 00 00  - mov qword ptr [rsp+30],00000000
+eldenring.exe.text+2541DD: FF 50 18                    - call qword ptr [rax+18]
+eldenring.exe.text+2541E0: 83 F8 08                    - cmp eax,08
+eldenring.exe.text+2541E3: 75 20                       - jne eldenring.exe.text+254205
+eldenring.exe.text+2541E5: E8 B6 C5 BA 00              - call eldenring.exe.text+E007A0
+eldenring.exe.text+2541EA: 48 39 44 24 30              - cmp [rsp+30],rax
+// ---------- INJECTING HERE ----------
+eldenring.exe.text+2541EF: 75 14                       - jne eldenring.exe.text+254205
+// ---------- DONE INJECTING  ----------
+eldenring.exe.text+2541F1: 48 8B 0D 10 3F 9D 03        - mov rcx,[eldenring.exe+3C29108]
+eldenring.exe.text+2541F8: B0 01                       - mov al,01
+eldenring.exe.text+2541FA: 88 81 F0 00 00 00           - mov [rcx+000000F0],al
+eldenring.exe.text+254200: 48 83 C4 28                 - add rsp,28
+eldenring.exe.text+254204: C3                          - ret
+eldenring.exe.text+254205: 48 8B 0D FC 3E 9D 03        - mov rcx,[eldenring.exe+3C29108]
+eldenring.exe.text+25420C: 32 C0                       - xor al,al
+eldenring.exe.text+25420E: 88 81 F0 00 00 00           - mov [rcx+000000F0],al
+eldenring.exe.text+254214: 48 83 C4 28                 - add rsp,28
+eldenring.exe.text+254218: C3                          - ret
+}
+</AssemblerScript>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>104173</ID>
+          <Description>"RENAME CURRENT CHARACTER"</Description>
+          <Options moHideChildren="1" moDeactivateChildrenAsWell="1"/>
+          <Color>7EA9C9</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : eldenring.exe
+  Version: 1.06
+  Date   : 2022-09-20
+  Author : Mi5hmasH
+}
+
+[ENABLE]
+
+{$lua}
+--- TIMER
+if not timer_1 then
+  local i = 1
+  local msg = " MAX LENGTH IS 16 CHARS "
+  local frames = {"▮", "▯"}
+  timer_1 = createTimer(getMainForm(), true)
+  timer_1.Interval = 500 --delay
+  timer_1.OnTimer = function()
+    memrec.Child[0].Description = frames[i]..frames[i]..frames[i].." "..msg.." "..frames[i]..frames[i]..frames[i]
+    if i &gt;= #frames then i=1 else i=i+1 end
+    end
+else
+    timer_1.Enabled = true
+end
+
+{$asm}
+// AOB_SCAN
+aobscanmodule(AOB_CHAR_NAME,$process,7E ?? 48 ?? ?? ?? ?? 33 ?? 4D ?? ?? 74 ?? 48 ?? ?? ?? 48 ?? ?? 66)
+alloc(newmem,$1000,AOB_CHAR_NAME)
+// AOB_DEFINE
+define(CHAR_NAME,AOB_CHAR_NAME+7) //+7
+// AOB_SYMBOLS
+registersymbol(AOB_CHAR_NAME,CHAR_NAME)
+
+// SB (storeBytes)
+alloc(SB_CHAR_NAME,$5,CHAR_NAME)
+// SB_SYMBOLS
+registersymbol(SB_CHAR_NAME)
+// SB_ASSIGN
+SB_CHAR_NAME:
+readmem(CHAR_NAME,$5)
+
+// Allocate memory address
+alloc(p_CHAR_NAME,$8,CHAR_NAME)
+registersymbol(p_CHAR_NAME)
+p_CHAR_NAME:
+dq 0
+
+// LABELS
+label(code,return)
+
+newmem:
+  pushf
+  test r12,r12
+  jnz @f
+  mov [p_CHAR_NAME],r8
+@@:
+  popf
+code:
+  reassemble(CHAR_NAME) // xor esi,esi
+  reassemble(CHAR_NAME+2) // test r8,r8
+  jmp return
+
+CHAR_NAME:
+  jmp newmem
+return:
+
+[DISABLE]
+
+{$lua}
+if timer_1 then
+   timer_1.Enabled = false
+end
+
+{$asm}
+
+CHAR_NAME:
+  readmem(SB_CHAR_NAME,$5) // db 33 F6 4D 85 C0
+
+unregistersymbol(*)
+dealloc(*)
+
+{ ORIGINAL CODE
+eldenring.exe.text+C99A6D: 0F 87 8F 00 00 00  - ja eldenring.exe.text+C99B02
+eldenring.exe.text+C99A73: 48 89 5C 24 30     - mov [rsp+30],rbx
+eldenring.exe.text+C99A78: 48 63 C2           - movsxd  rax,edx
+eldenring.exe.text+C99A7B: 48 89 7C 24 20     - mov [rsp+20],rdi
+eldenring.exe.text+C99A80: 48 8D 14 80        - lea rdx,[rax+rax*4]
+eldenring.exe.text+C99A84: 8B 5C D1 18        - mov ebx,[rcx+rdx*8+18]
+eldenring.exe.text+C99A88: 48 8D 3C D1        - lea rdi,[rcx+rdx*8]
+eldenring.exe.text+C99A8C: 85 DB              - test ebx,ebx
+eldenring.exe.text+C99A8E: 7E 5C              - jle eldenring.exe.text+C99AEC
+eldenring.exe.text+C99A90: 48 89 74 24 38     - mov [rsp+38],rsi
+// ---------- INJECTING HERE ----------
+eldenring.exe.text+C99A95: 33 F6              - xor esi,esi
+// ---------- DONE INJECTING  ----------
+eldenring.exe.text+C99A97: 4D 85 C0           - test r8,r8
+eldenring.exe.text+C99A9A: 74 10              - je eldenring.exe.text+C99AAC
+eldenring.exe.text+C99A9C: 48 83 C8 FF        - or rax,-01
+eldenring.exe.text+C99AA0: 48 FF C0           - inc rax
+eldenring.exe.text+C99AA3: 66 41 39 34 40     - cmp [r8+rax*2],si
+eldenring.exe.text+C99AA8: 75 F6              - jne eldenring.exe.text+C99AA0
+eldenring.exe.text+C99AAA: EB 02              - jmp eldenring.exe.text+C99AAE
+eldenring.exe.text+C99AAC: 8B C6              - mov eax,esi
+eldenring.exe.text+C99AAE: 3B C3              - cmp eax,ebx
+eldenring.exe.text+C99AB0: 0F 4E D8           - cmovle ebx,eax
+}
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>104171</ID>
+              <Description>"▯▯▯  MAX LENGTH IS 16 CHARS  ▯▯▯"</Description>
+              <Options moHideChildren="1"/>
+              <Color>C7AFE2</Color>
+              <GroupHeader>1</GroupHeader>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>104172</ID>
+              <Description>"Character Name"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <Color>B9D0E1</Color>
+              <VariableType>String</VariableType>
+              <Length>16</Length>
+              <Unicode>1</Unicode>
+              <CodePage>0</CodePage>
+              <ZeroTerminate>1</ZeroTerminate>
+              <Address>p_CHAR_NAME</Address>
+              <Offsets>
+                <Offset>0</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104174</ID>
+      <Description>"============================"</Description>
+      <Options moHideChildren="1"/>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104168</ID>
+      <Description>"[COMPACT MODE]"</Description>
+      <Color>E2AFC7</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+function cycleFullCompact( sender, force )
+  local state = not( compactmenuitem.Caption == 'Compact View Mode' )
+  if force ~= nil then
+    state = not force
+  end
+  compactmenuitem.Caption = state and 'Compact View Mode' or 'Full View Mode'
+  getMainForm().Splitter1.Visible = state
+  getMainForm().Panel4.Visible = state
+  getMainForm().Panel5.Visible = state
+end
+
+function addCompactMenu()
+  if compactmenualreadyexists then return end
+    local parent = getMainForm().Menu.Items
+    compactmenuitem = createMenuItem( parent )
+    parent.add( compactmenuitem )
+    compactmenuitem.Caption = 'Compact View Mode'
+    compactmenuitem.OnClick = cycleFullCompact
+    compactmenualreadyexists = 'yes'
+end
+
+  addCompactMenu()
+  cycleFullCompact( nil, true )
+
+
+[DISABLE]
+
+if syntaxcheck then return end
+
+cycleFullCompact( nil, false )
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104169</ID>
+      <Description>"❓ ABOUT ME"</Description>
+      <Color>CB7099</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+-- OPEN TABLE EXTRAS (ABOUT)
+getMainForm().CommentButton.doClick()
+
+
+[DISABLE]
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104170</ID>
+      <Description>"============================"</Description>
+      <Options moHideChildren="1"/>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104151</ID>
+      <Description>"🌎 Open Cheat Engine Download Page"</Description>
+      <Options moHideChildren="1"/>
+      <Color>ACAF41</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+local link='https://www.cheatengine.org/'
+ShellExecute(link)
+memrec.Child[0].Description = link
+
+[DISABLE]
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>104154</ID>
+          <Description>"https://www.cheatengine.org/"</Description>
+          <Color>D6D894</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104157</ID>
+      <Description>"🌎 Open Steam Store Page"</Description>
+      <Options moHideChildren="1"/>
+      <Color>ACAF41</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+local link='https://store.steampowered.com/app/1245620/ELDEN_RING/'
+ShellExecute(link)
+memrec.Child[0].Description = link
+
+[DISABLE]
+
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>104158</ID>
+          <Description>"https://store.steampowered.com/app/1245620/ELDEN_RING/"</Description>
+          <Color>D6D894</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104159</ID>
+      <Description>"🌎 Open Author's Github"</Description>
+      <Options moHideChildren="1"/>
+      <Color>ACAF41</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+local link='https://github.com/mi5hmash'
+ShellExecute(link)
+memrec.Child[0].Description = link
+
+[DISABLE]
+
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>104160</ID>
+          <Description>"https://github.com/mi5hmash"</Description>
+          <Color>D6D894</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <CheatCodes>
+    <CodeEntry>
+      <Description>STEAMID_CHECK1</Description>
+      <AddressString>eldenring.exe+8023F0</AddressString>
+      <Before>
+        <Byte>5F</Byte>
+        <Byte>00</Byte>
+        <Byte>48</Byte>
+        <Byte>3B</Byte>
+        <Byte>D8</Byte>
+      </Before>
+      <Actual>
+        <Byte>75</Byte>
+        <Byte>12</Byte>
+      </Actual>
+      <After>
+        <Byte>B0</Byte>
+        <Byte>01</Byte>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>5C</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>STEAMID_CHECK2</Description>
+      <AddressString>eldenring.exe+2551EF</AddressString>
+      <Before>
+        <Byte>48</Byte>
+        <Byte>39</Byte>
+        <Byte>44</Byte>
+        <Byte>24</Byte>
+        <Byte>30</Byte>
+      </Before>
+      <Actual>
+        <Byte>75</Byte>
+        <Byte>14</Byte>
+      </Actual>
+      <After>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>0D</Byte>
+        <Byte>10</Byte>
+        <Byte>3F</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>CHAR_NAME pointer</Description>
+      <AddressString>eldenring.exe+C9AA97</AddressString>
+      <Before>
+        <Byte>74</Byte>
+        <Byte>24</Byte>
+        <Byte>38</Byte>
+        <Byte>33</Byte>
+        <Byte>F6</Byte>
+      </Before>
+      <Actual>
+        <Byte>4D</Byte>
+        <Byte>85</Byte>
+        <Byte>C0</Byte>
+      </Actual>
+      <After>
+        <Byte>74</Byte>
+        <Byte>10</Byte>
+        <Byte>48</Byte>
+        <Byte>83</Byte>
+        <Byte>C8</Byte>
+      </After>
+    </CodeEntry>
+  </CheatCodes>
+  <UserdefinedSymbols/>
+  <Comments>=========================================
+Game Title    : ELDEN RING
+Game Version  : 1.06
+Table Version : 1.0.0
+Cheat Engine  : 7.4
+Date          : 20/09/2022
+Author        : Mi5hmasH
+=========================================
+</Comments>
+</CheatTable>

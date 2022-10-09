@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="42">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>104162</ID>
+      <Description>"*** SEKIRO SHADOWS DIE TWICE ***"</Description>
+      <Options moHideChildren="1"/>
+      <Color>65D7FC</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>8</ID>
+      <Description>"[ACTIVATE ME]"</Description>
+      <Options moHideChildren="1" moDeactivateChildrenAsWell="1"/>
+      <Color>C7AFE2</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+  --VARIABLES
+  local procName = "Sekiro"
+  local processName = procName..".exe"
+  local ceLatestVer = 7.4 -- latest CE version number known to this cheat table.
+  clr0 = 0xc7afe2
+  clr1 = 0xc2ff93
+  local statmr = memrec.Child[0]
+
+  -- OPEN PROCESS
+  local openProc = OpenProcess(processName)
+  if not openProc then
+     messageDialog("Failed to open the '"..processName.."' process.", 1, 2)
+     memrec.Description = "[DEACTIVATE ME] Launch the '"..processName.."' process and try again."
+     memrec.Color = clr0
+     statmr.Description = "???!!!???!!!"
+     statmr.Color = clr0
+  else
+    -- GET PROCESS VERSION
+    local exePath = enumModules()[1].PathToFile
+    procVer, pvTable = getFileVersion(exePath)
+    procVer = "v"..pvTable.major.."."..pvTable.minor.."."..pvTable.release.."."..pvTable.build
+    -- SET CURRENT CONTROL DESCRIPTION
+    memrec.Description = "[ACTIVATED]"
+    memrec.Color = clr1
+    statmr.Description = procName.." "..procVer
+    statmr.Color = clr1
+  end
+
+  -- CHECK CHEAT ENGINE VERSION
+  local ceCurrentVer = getCEVersion() -- currently installed CE version number.
+  if ceCurrentVer &lt; ceLatestVer then
+     messageDialog("Your Cheat Engine software is outdated and this table could not run properly.\nPlease consider updating to the latest Cheat Engine version. Latest official public release version is avilable at https://cheatengine.org/\nYour Cheat Engine Version : "..ceCurrentVer.."\nLatest Known Public Cheat Engine Version : "..ceLatestVer,0)
+     -- CLOSE MAIN FORM
+     -- MainForm.close() -- closes MainForm Window
+  end
+
+
+[DISABLE]
+
+if syntaxcheck then return end
+
+  -- SET CURRENT CONTROL DESCRIPTION
+  memrec.Description = "[ACTIVATE ME]"
+  memrec.Color = clr0
+  -- NULLIFY ALL GLOBAL VARIABLES
+  procVer, pvTable = nil, nil
+  clr0, clr1 = nil, nil
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>104167</ID>
+          <Description>"???!!!???!!!"</Description>
+          <Options moHideChildren="1"/>
+          <Color>C7AFE2</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>4</ID>
+          <Description>"DISABLE STEAM_ID CHECKS"</Description>
+          <Color>7EA9C9</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : sekiro.exe
+  Version: 1.06
+  Date   : 2022-09-16
+  Author : Mi5hmasH
+}
+
+[ENABLE]
+// AOB_SCAN
+aobscanmodule(AOB_STEAMID_CHECK1,$process,49 ?? ?? 48 ?? ?? 48 ?? ?? E8 ?? ?? ?? ?? 48 ?? ?? 75 ?? B0 ?? 48)
+aobscanmodule(AOB_STEAMID_CHECK2,$process,40 ?? ?? ?? ?? ?? ?? 75 ?? E8 ?? ?? ?? ?? 48 ?? ?? 0F ?? ?? 48)
+// AOB_DEFINE
+define(STEAMID_CHECK1,AOB_STEAMID_CHECK1+11) //+17
+define(STEAMID_CHECK2,AOB_STEAMID_CHECK2+7) //+7
+// AOB_SYMBOLS
+registersymbol(AOB_STEAMID_CHECK1,AOB_STEAMID_CHECK2)
+registersymbol(STEAMID_CHECK1,STEAMID_CHECK2)
+
+// SB (storeBytes)
+alloc(SB_STEAMID_CHECK1,$2,STEAMID_CHECK1)
+alloc(SB_STEAMID_CHECK2,$1,STEAMID_CHECK2)
+// SB_SYMBOLS
+registersymbol(SB_STEAMID_CHECK1,SB_STEAMID_CHECK2)
+// SB_ASSIGN
+SB_STEAMID_CHECK1:
+readmem(STEAMID_CHECK1,2)
+SB_STEAMID_CHECK2:
+readmem(STEAMID_CHECK2,1)
+
+STEAMID_CHECK1:
+  db 90 90
+
+STEAMID_CHECK2:
+  db 74
+
+[DISABLE]
+
+STEAMID_CHECK1:
+  readmem(SB_STEAMID_CHECK1,2) // db 75 12
+
+STEAMID_CHECK2:
+  readmem(SB_STEAMID_CHECK2,1) // db 75
+
+unregistersymbol(*)
+dealloc(*)
+
+{ ORIGINAL CODE
+// STEAMID_CHECK1
+sekiro.exe.text+DF97DF: CC                    - int 3
+sekiro.exe.text+DF97E0: 48 89 5C 24 08        - mov [rsp+08],rbx
+sekiro.exe.text+DF97E5: 48 89 74 24 10        - mov [rsp+10],rsi
+sekiro.exe.text+DF97EA: 57                    - push rdi
+sekiro.exe.text+DF97EB: 48 83 EC 20           - sub rsp,20
+sekiro.exe.text+DF97EF: 49 8B F8              - mov rdi,r8
+sekiro.exe.text+DF97F2: 48 8B F2              - mov rsi,rdx
+sekiro.exe.text+DF97F5: 48 8B D9              - mov rbx,rcx
+sekiro.exe.text+DF97F8: E8 03 83 3B 00        - call sekiro.exe.text+11B1B00
+sekiro.exe.text+DF97FD: 48 3B D8              - cmp rbx,rax
+// ---------- INJECTING HERE ----------
+sekiro.exe.text+DF9800: 75 12                 - jne sekiro.exe.text+DF9814
+// ---------- DONE INJECTING  ----------
+sekiro.exe.text+DF9802: B0 01                 - mov al,01
+sekiro.exe.text+DF9804: 48 8B 5C 24 30        - mov rbx,[rsp+30]
+sekiro.exe.text+DF9809: 48 8B 74 24 38        - mov rsi,[rsp+38]
+sekiro.exe.text+DF980E: 48 83 C4 20           - add rsp,20
+sekiro.exe.text+DF9812: 5F                    - pop rdi
+
+// STEAMID_CHECK2
+sekiro.exe.text+7B2474: E8 47 EC 07 00        - call sekiro.exe.text+8310C0
+sekiro.exe.text+7B2479: 84 C0                 - test al,al
+sekiro.exe.text+7B247B: 74 05                 - je sekiro.exe.text+7B2482
+sekiro.exe.text+7B247D: E8 AE E2 07 00        - call sekiro.exe.text+830730
+sekiro.exe.text+7B2482: E8 89 EC 07 00        - call sekiro.exe.text+831110
+sekiro.exe.text+7B2487: 84 C0                 - test al,al
+sekiro.exe.text+7B2489: 74 05                 - je sekiro.exe.text+7B2490
+sekiro.exe.text+7B248B: E8 20 E4 07 00        - call sekiro.exe.text+8308B0
+sekiro.exe.text+7B2490: 48 8B 05 29 76 5A 03  - mov rax,[sekiro.exe+3D5AAC0]
+sekiro.exe.text+7B2497: 40 38 B8 61 01 00 00  - cmp [rax+00000161],dil
+// ---------- INJECTING HERE ----------
+sekiro.exe.text+7B249E: 75 1A                 - jne sekiro.exe.text+7B24BA
+// ---------- DONE INJECTING  ----------
+sekiro.exe.text+7B24A0: E8 5B F6 9F 00        - call sekiro.exe.text+11B1B00
+sekiro.exe.text+7B24A5: 48 39 03              - cmp [rbx],rax
+sekiro.exe.text+7B24A8: 0F 94 C1              - sete cl
+sekiro.exe.text+7B24AB: 48 8B 05 0E 76 5A 03  - mov rax,[sekiro.exe+3D5AAC0]
+sekiro.exe.text+7B24B2: 88 88 F0 00 00 00     - mov [rax+000000F0],cl
+sekiro.exe.text+7B24B8: EB 07                 - jmp sekiro.exe.text+7B24C1
+sekiro.exe.text+7B24BA: C6 80 F0 00 00 00 01  - mov byte ptr [rax+000000F0],01
+sekiro.exe.text+7B24C1: 8B 4B 40              - mov ecx,[rbx+40]
+sekiro.exe.text+7B24C4: 48 8B 05 F5 75 5A 03  - mov rax,[sekiro.exe+3D5AAC0]
+sekiro.exe.text+7B24CB: 89 88 E0 00 00 00     - mov [rax+000000E0],ecx
+}
+</AssemblerScript>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104171</ID>
+      <Description>"============================"</Description>
+      <Options moHideChildren="1"/>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104172</ID>
+      <Description>"[COMPACT MODE]"</Description>
+      <Color>E2AFC7</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+function cycleFullCompact( sender, force )
+  local state = not( compactmenuitem.Caption == 'Compact View Mode' )
+  if force ~= nil then
+    state = not force
+  end
+  compactmenuitem.Caption = state and 'Compact View Mode' or 'Full View Mode'
+  getMainForm().Splitter1.Visible = state
+  getMainForm().Panel4.Visible = state
+  getMainForm().Panel5.Visible = state
+end
+
+function addCompactMenu()
+  if compactmenualreadyexists then return end
+    local parent = getMainForm().Menu.Items
+    compactmenuitem = createMenuItem( parent )
+    parent.add( compactmenuitem )
+    compactmenuitem.Caption = 'Compact View Mode'
+    compactmenuitem.OnClick = cycleFullCompact
+    compactmenualreadyexists = 'yes'
+end
+
+  addCompactMenu()
+  cycleFullCompact( nil, true )
+
+
+[DISABLE]
+
+if syntaxcheck then return end
+
+cycleFullCompact( nil, false )
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104173</ID>
+      <Description>"❓ ABOUT ME"</Description>
+      <Color>CB7099</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+-- OPEN TABLE EXTRAS (ABOUT)
+getMainForm().CommentButton.doClick()
+
+
+[DISABLE]
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104170</ID>
+      <Description>"============================"</Description>
+      <Options moHideChildren="1"/>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104174</ID>
+      <Description>"🌎 Open Cheat Engine Download Page"</Description>
+      <Options moHideChildren="1"/>
+      <Color>ACAF41</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+local link='https://www.cheatengine.org/'
+ShellExecute(link)
+memrec.Child[0].Description = link
+
+[DISABLE]
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>104175</ID>
+          <Description>"https://www.cheatengine.org/"</Description>
+          <Color>D6D894</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104157</ID>
+      <Description>"🌎 Open Steam Store Page"</Description>
+      <Options moHideChildren="1"/>
+      <Color>ACAF41</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+local link='https://store.steampowered.com/app/814380/Sekiro_Shadows_Die_Twice__GOTY_Edition/'
+ShellExecute(link)
+memrec.Child[0].Description = link
+
+[DISABLE]
+
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>104158</ID>
+          <Description>"https://store.steampowered.com/app/814380/Sekiro_Shadows_Die_Twice__GOTY_Edition/"</Description>
+          <Color>D6D894</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104176</ID>
+      <Description>"🌎 Open Author's Github"</Description>
+      <Options moHideChildren="1"/>
+      <Color>ACAF41</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+local link='https://github.com/mi5hmash'
+ShellExecute(link)
+memrec.Child[0].Description = link
+
+[DISABLE]
+
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>104177</ID>
+          <Description>"https://github.com/mi5hmash"</Description>
+          <Color>D6D894</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <CheatCodes>
+    <CodeEntry>
+      <Description>STEAMID_CHECK1</Description>
+      <AddressString>sekiro.exe+DFA800</AddressString>
+      <Before>
+        <Byte>3B</Byte>
+        <Byte>00</Byte>
+        <Byte>CC</Byte>
+        <Byte>3B</Byte>
+        <Byte>D8</Byte>
+      </Before>
+      <Actual>
+        <Byte>75</Byte>
+        <Byte>12</Byte>
+      </Actual>
+      <After>
+        <Byte>B0</Byte>
+        <Byte>01</Byte>
+        <Byte>48</Byte>
+        <Byte>8B</Byte>
+        <Byte>5C</Byte>
+      </After>
+    </CodeEntry>
+    <CodeEntry>
+      <Description>STEAMID_CHECK2</Description>
+      <AddressString>sekiro.exe+7B349E</AddressString>
+      <Before>
+        <Byte>B8</Byte>
+        <Byte>61</Byte>
+        <Byte>01</Byte>
+        <Byte>00</Byte>
+        <Byte>00</Byte>
+      </Before>
+      <Actual>
+        <Byte>CC</Byte>
+        <Byte>1A</Byte>
+      </Actual>
+      <After>
+        <Byte>E8</Byte>
+        <Byte>5B</Byte>
+        <Byte>F6</Byte>
+        <Byte>9F</Byte>
+        <Byte>00</Byte>
+      </After>
+    </CodeEntry>
+  </CheatCodes>
+  <UserdefinedSymbols/>
+  <Comments>=========================================
+Game Title    : SEKIRO SHADOWS DIE TWICE
+Game Version  : 1.06
+Table Version : 1.0.0
+Cheat Engine  : 7.4
+Date          : 16/09/2022
+Author        : Mi5hmasH
+=========================================
+</Comments>
+</CheatTable>

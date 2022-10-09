@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="42">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>104162</ID>
+      <Description>"*** DARK SOULS REMASTERED ***"</Description>
+      <Options moHideChildren="1"/>
+      <Color>65D7FC</Color>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>7</ID>
+      <Description>"[ACTIVATE ME]"</Description>
+      <Options moHideChildren="1" moDeactivateChildrenAsWell="1"/>
+      <Color>C7AFE2</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+  --VARIABLES
+  local procName = "DarkSoulsRemastered"
+  local processName = procName..".exe"
+  local ceLatestVer = 7.4 -- latest CE version number known to this cheat table.
+  clr0 = 0xc7afe2
+  clr1 = 0xc2ff93
+  local statmr = memrec.Child[0]
+
+  -- OPEN PROCESS
+  local openProc = OpenProcess(processName)
+  if not openProc then
+     messageDialog("Failed to open the '"..processName.."' process.", 1, 2)
+     memrec.Description = "[DEACTIVATE ME] Launch the '"..processName.."' process and try again."
+     memrec.Color = clr0
+     statmr.Description = "???!!!???!!!"
+     statmr.Color = clr0
+  else
+    -- GET PROCESS VERSION
+    local exePath = enumModules()[1].PathToFile
+    procVer, pvTable = getFileVersion(exePath)
+    procVer = "v"..pvTable.major.."."..pvTable.minor.."."..pvTable.release.."."..pvTable.build
+    -- SET CURRENT CONTROL DESCRIPTION
+    memrec.Description = "[ACTIVATED]"
+    memrec.Color = clr1
+    statmr.Description = procName.." "..procVer
+    statmr.Color = clr1
+  end
+
+  -- CHECK CHEAT ENGINE VERSION
+  local ceCurrentVer = getCEVersion() -- currently installed CE version number.
+  if ceCurrentVer &lt; ceLatestVer then
+     messageDialog("Your Cheat Engine software is outdated and this table could not run properly.\nPlease consider updating to the latest Cheat Engine version. Latest official public release version is avilable at https://cheatengine.org/\nYour Cheat Engine Version : "..ceCurrentVer.."\nLatest Known Public Cheat Engine Version : "..ceLatestVer,0)
+     -- CLOSE MAIN FORM
+     -- MainForm.close() -- closes MainForm Window
+  end
+
+
+[DISABLE]
+
+if syntaxcheck then return end
+
+  -- SET CURRENT CONTROL DESCRIPTION
+  memrec.Description = "[ACTIVATE ME]"
+  memrec.Color = clr0
+  -- NULLIFY ALL GLOBAL VARIABLES
+  procVer, pvTable = nil, nil
+  clr0, clr1 = nil, nil
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>104164</ID>
+          <Description>"???!!!???!!!"</Description>
+          <Options moHideChildren="1"/>
+          <Color>C7AFE2</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>23932</ID>
+          <Description>"GET ENCRYPTION KEY"</Description>
+          <Options moHideChildren="1" moDeactivateChildrenAsWell="1"/>
+          <Color>7EA9C9</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : DarkSoulsRemastered.exe
+  Version: 1.03
+  Date   : 2022-09-15
+  Author : Mi5hmasH
+}
+
+[ENABLE]
+// AOB_SCAN
+aobscanmodule(AOB_ENCRYPTION_KEY,$process,48 ?? ?? ?? ?? 55 56 57 41 ?? 41 ?? 41 ?? 41 ?? 48 ?? ?? 48 ?? ?? ?? 8B ?? 4C)
+alloc(newmem,$1000,AOB_ENCRYPTION_KEY)
+// AOB_DEFINE
+define(ENCRYPTION_KEY,AOB_ENCRYPTION_KEY+17) //+23
+// AOB_SYMBOLS
+registersymbol(AOB_ENCRYPTION_KEY,ENCRYPTION_KEY)
+
+// SB (storeBytes)
+alloc(SB_ENCRYPTION_KEY,$9,ENCRYPTION_KEY)
+// SB_SYMBOLS
+registersymbol(SB_ENCRYPTION_KEY)
+// SB_ASSIGN
+SB_ENCRYPTION_KEY:
+readmem(ENCRYPTION_KEY,$9)
+
+// Allocate memory address
+alloc(p_ENCRYPTION_KEY,$8,ENCRYPTION_KEY)
+registersymbol(p_ENCRYPTION_KEY)
+p_ENCRYPTION_KEY:
+dq 0
+
+// LABELS
+label(code,return)
+
+newmem:
+  mov [p_ENCRYPTION_KEY],rcx
+code:
+  reassemble(ENCRYPTION_KEY) // mov edi,[rcx]
+  reassemble(ENCRYPTION_KEY+2) // lea r10,[DarkSoulsRemastered.exe]
+  jmp return
+
+ENCRYPTION_KEY:
+  jmp newmem
+  nop 4
+return:
+
+
+[DISABLE]
+
+ENCRYPTION_KEY:
+  readmem(SB_ENCRYPTION_KEY,$9) // db 8B 39 4C 8D 15 BB CB 24 FF
+
+unregistersymbol(*)
+dealloc(*)
+
+{ ORIGINAL CODE
+DarkSoulsRemastered.exe.text+DB2425: 48 89 54 24 10        - mov [rsp+10],rdx
+DarkSoulsRemastered.exe.text+DB242A: 55                    - push rbp
+DarkSoulsRemastered.exe.text+DB242B: 56                    - push rsi
+DarkSoulsRemastered.exe.text+DB242C: 57                    - push rdi
+DarkSoulsRemastered.exe.text+DB242D: 41 54                 - push r12
+DarkSoulsRemastered.exe.text+DB242F: 41 55                 - push r13
+DarkSoulsRemastered.exe.text+DB2431: 41 56                 - push r14
+DarkSoulsRemastered.exe.text+DB2433: 41 57                 - push r15
+DarkSoulsRemastered.exe.text+DB2435: 48 8B EC              - mov rbp,rsp
+DarkSoulsRemastered.exe.text+DB2438: 48 83 EC 20           - sub rsp,20
+// ---------- INJECTING HERE ----------
+DarkSoulsRemastered.exe.text+DB243C: 8B 39                 - mov edi,[rcx]
+// ---------- DONE INJECTING  ----------
+DarkSoulsRemastered.exe.text+DB243E: 4C 8D 15 BB CB 24 FF  - lea r10,[DarkSoulsRemastered.exe]
+DarkSoulsRemastered.exe.text+DB2445: 89 3A                 - mov [rdx],edi
+DarkSoulsRemastered.exe.text+DB2447: 4C 8B F2              - mov r14,rdx
+DarkSoulsRemastered.exe.text+DB244A: 44 8B 69 04           - mov r13d,[rcx+04]
+DarkSoulsRemastered.exe.text+DB244E: 44 89 6A 04           - mov [rdx+04],r13d
+DarkSoulsRemastered.exe.text+DB2452: 8B 41 08              - mov eax,[rcx+08]
+DarkSoulsRemastered.exe.text+DB2455: 89 42 08              - mov [rdx+08],eax
+DarkSoulsRemastered.exe.text+DB2458: 44 8B 61 0C           - mov r12d,[rcx+0C]
+DarkSoulsRemastered.exe.text+DB245C: 45 8B FC              - mov r15d,r12d
+DarkSoulsRemastered.exe.text+DB245F: 44 33 F8              - xor r15d,eax
+}
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>23931</ID>
+              <Description>"ENCRYPTION KEY"</Description>
+              <ShowAsHex>1</ShowAsHex>
+              <ShowAsSigned>1</ShowAsSigned>
+              <Color>B9D0E1</Color>
+              <VariableType>Array of byte</VariableType>
+              <ByteLength>16</ByteLength>
+              <Address>p_ENCRYPTION_KEY</Address>
+              <Offsets>
+                <Offset>0</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+        <CheatEntry>
+          <ID>104177</ID>
+          <Description>"RENAME CURRENT CHARACTER"</Description>
+          <Options moHideChildren="1" moDeactivateChildrenAsWell="1"/>
+          <Color>7EA9C9</Color>
+          <VariableType>Auto Assembler Script</VariableType>
+          <AssemblerScript>{ Game   : DarkSoulsRemastered.exe
+  Version: 1.03
+  Date   : 2022-09-20
+  Author : Mi5hmasH
+}
+
+[ENABLE]
+
+{$lua}
+--- TIMER
+if not timer_1 then
+  local i = 1
+  local msg = " MAX LENGTH IS 13 CHARS "
+  local frames = {"▮", "▯"}
+  timer_1 = createTimer(getMainForm(), true)
+  timer_1.Interval = 500 --delay
+  timer_1.OnTimer = function()
+    memrec.Child[0].Description = frames[i]..frames[i]..frames[i].." "..msg.." "..frames[i]..frames[i]..frames[i]
+    if i &gt;= #frames then i=1 else i=i+1 end
+    end
+else
+    timer_1.Enabled = true
+end
+
+{$asm}
+// AOB_SCAN
+aobscanmodule(CHAR_NAME,$process,33 ?? 4D ?? ?? 74 ?? 48 ?? ?? ?? 48 ?? ?? 66)
+alloc(newmem,$1000,CHAR_NAME)
+// AOB_SYMBOLS
+registersymbol(CHAR_NAME)
+
+// SB (storeBytes)
+alloc(SB_CHAR_NAME,$5,CHAR_NAME)
+// SB_SYMBOLS
+registersymbol(SB_CHAR_NAME)
+// SB_ASSIGN
+SB_CHAR_NAME:
+readmem(CHAR_NAME,$5)
+
+// Allocate memory address
+alloc(p_CHAR_NAME,$8,CHAR_NAME)
+registersymbol(p_CHAR_NAME)
+p_CHAR_NAME:
+dq 0
+
+// LABELS
+label(code,return)
+
+newmem:
+  pushf
+  cmp dl,19
+  jne @f
+  mov [p_CHAR_NAME],r8
+@@:
+  popf
+code:
+  reassemble(CHAR_NAME) // xor esi,esi
+  reassemble(CHAR_NAME+2) // test r8,r8
+  jmp return
+
+CHAR_NAME:
+  jmp newmem
+return:
+
+[DISABLE]
+
+{$lua}
+if timer_1 then
+   timer_1.Enabled = false
+end
+
+{$asm}
+
+CHAR_NAME:
+  readmem(SB_CHAR_NAME,$5) // db 33 F6 4D 85 C0
+
+unregistersymbol(*)
+dealloc(*)
+
+{ ORIGINAL CODE
+DarkSoulsRemastered.exe.text+545E2D: 0F 87 8E 00 00 00  - ja DarkSoulsRemastered.exe.text+545EC1
+DarkSoulsRemastered.exe.text+545E33: 48 89 5C 24 30     - mov [rsp+30],rbx
+DarkSoulsRemastered.exe.text+545E38: 48 63 C2           - movsxd  rax,edx
+DarkSoulsRemastered.exe.text+545E3B: 48 89 7C 24 20     - mov [rsp+20],rdi
+DarkSoulsRemastered.exe.text+545E40: 48 8D 14 80        - lea rdx,[rax+rax*4]
+DarkSoulsRemastered.exe.text+545E44: 48 8D 3C D1        - lea rdi,[rcx+rdx*8]
+DarkSoulsRemastered.exe.text+545E48: 8B 9F 98 70 00 00  - mov ebx,[rdi+00007098]
+DarkSoulsRemastered.exe.text+545E4E: 85 DB              - test ebx,ebx
+DarkSoulsRemastered.exe.text+545E50: 7E 5E              - jle DarkSoulsRemastered.exe.text+545EB0
+DarkSoulsRemastered.exe.text+545E52: 48 89 74 24 38     - mov [rsp+38],rsi
+// ---------- INJECTING HERE ----------
+DarkSoulsRemastered.exe.text+545E57: 33 F6              - xor esi,esi
+// ---------- DONE INJECTING  ----------
+DarkSoulsRemastered.exe.text+545E59: 4D 85 C0           - test r8,r8
+DarkSoulsRemastered.exe.text+545E5C: 74 10              - je DarkSoulsRemastered.exe.text+545E6E
+DarkSoulsRemastered.exe.text+545E5E: 48 83 C8 FF        - or rax,-01
+DarkSoulsRemastered.exe.text+545E62: 48 FF C0           - inc rax
+DarkSoulsRemastered.exe.text+545E65: 66 41 39 34 40     - cmp [r8+rax*2],si
+DarkSoulsRemastered.exe.text+545E6A: 75 F6              - jne DarkSoulsRemastered.exe.text+545E62
+DarkSoulsRemastered.exe.text+545E6C: EB 02              - jmp DarkSoulsRemastered.exe.text+545E70
+DarkSoulsRemastered.exe.text+545E6E: 8B C6              - mov eax,esi
+DarkSoulsRemastered.exe.text+545E70: 3B C3              - cmp eax,ebx
+DarkSoulsRemastered.exe.text+545E72: 0F 4E D8           - cmovle ebx,eax
+}
+</AssemblerScript>
+          <CheatEntries>
+            <CheatEntry>
+              <ID>104178</ID>
+              <Description>"▯▯▯  MAX LENGTH IS 13 CHARS  ▯▯▯"</Description>
+              <Options moHideChildren="1"/>
+              <Color>C7AFE2</Color>
+              <GroupHeader>1</GroupHeader>
+            </CheatEntry>
+            <CheatEntry>
+              <ID>104179</ID>
+              <Description>"Character Name"</Description>
+              <ShowAsSigned>0</ShowAsSigned>
+              <Color>B9D0E1</Color>
+              <VariableType>String</VariableType>
+              <Length>13</Length>
+              <Unicode>1</Unicode>
+              <CodePage>0</CodePage>
+              <ZeroTerminate>1</ZeroTerminate>
+              <Address>p_CHAR_NAME</Address>
+              <Offsets>
+                <Offset>0</Offset>
+              </Offsets>
+            </CheatEntry>
+          </CheatEntries>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104165</ID>
+      <Description>"============================"</Description>
+      <Options moHideChildren="1"/>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104171</ID>
+      <Description>"[COMPACT MODE]"</Description>
+      <Color>E2AFC7</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+function cycleFullCompact( sender, force )
+  local state = not( compactmenuitem.Caption == 'Compact View Mode' )
+  if force ~= nil then
+    state = not force
+  end
+  compactmenuitem.Caption = state and 'Compact View Mode' or 'Full View Mode'
+  getMainForm().Splitter1.Visible = state
+  getMainForm().Panel4.Visible = state
+  getMainForm().Panel5.Visible = state
+end
+
+function addCompactMenu()
+  if compactmenualreadyexists then return end
+    local parent = getMainForm().Menu.Items
+    compactmenuitem = createMenuItem( parent )
+    parent.add( compactmenuitem )
+    compactmenuitem.Caption = 'Compact View Mode'
+    compactmenuitem.OnClick = cycleFullCompact
+    compactmenualreadyexists = 'yes'
+end
+
+  addCompactMenu()
+  cycleFullCompact( nil, true )
+
+
+[DISABLE]
+
+if syntaxcheck then return end
+
+cycleFullCompact( nil, false )
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104172</ID>
+      <Description>"❓ ABOUT ME"</Description>
+      <Color>CB7099</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+-- OPEN TABLE EXTRAS (ABOUT)
+getMainForm().CommentButton.doClick()
+
+
+[DISABLE]
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104163</ID>
+      <Description>"============================"</Description>
+      <Options moHideChildren="1"/>
+      <GroupHeader>1</GroupHeader>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104173</ID>
+      <Description>"🌎 Open Cheat Engine Download Page"</Description>
+      <Options moHideChildren="1"/>
+      <Color>ACAF41</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+local link='https://www.cheatengine.org/'
+ShellExecute(link)
+memrec.Child[0].Description = link
+
+[DISABLE]
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>104174</ID>
+          <Description>"https://www.cheatengine.org/"</Description>
+          <Color>D6D894</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104157</ID>
+      <Description>"🌎 Open Steam Store Page"</Description>
+      <Options moHideChildren="1"/>
+      <Color>ACAF41</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+local link='https://store.steampowered.com/app/570940/DARK_SOULS_REMASTERED/'
+ShellExecute(link)
+memrec.Child[0].Description = link
+
+[DISABLE]
+
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>104158</ID>
+          <Description>"https://store.steampowered.com/app/570940/DARK_SOULS_REMASTERED/"</Description>
+          <Color>D6D894</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>104175</ID>
+      <Description>"🌎 Open Author's Github"</Description>
+      <Options moHideChildren="1"/>
+      <Color>ACAF41</Color>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{$lua}
+[ENABLE]
+
+if syntaxcheck then return end
+
+local link='https://github.com/mi5hmash'
+ShellExecute(link)
+memrec.Child[0].Description = link
+
+[DISABLE]
+
+</AssemblerScript>
+      <CheatEntries>
+        <CheatEntry>
+          <ID>104176</ID>
+          <Description>"https://github.com/mi5hmash"</Description>
+          <Color>D6D894</Color>
+          <GroupHeader>1</GroupHeader>
+        </CheatEntry>
+      </CheatEntries>
+    </CheatEntry>
+  </CheatEntries>
+  <CheatCodes>
+    <CodeEntry>
+      <Description>ENC_KEY</Description>
+      <AddressString>DarkSoulsRemastered.exe+DB343C</AddressString>
+      <Before>
+        <Byte>EC</Byte>
+        <Byte>48</Byte>
+        <Byte>83</Byte>
+        <Byte>EC</Byte>
+        <Byte>20</Byte>
+      </Before>
+      <Actual>
+        <Byte>8B</Byte>
+        <Byte>39</Byte>
+      </Actual>
+      <After>
+        <Byte>4C</Byte>
+        <Byte>8D</Byte>
+        <Byte>15</Byte>
+        <Byte>BB</Byte>
+        <Byte>CB</Byte>
+      </After>
+    </CodeEntry>
+  </CheatCodes>
+  <UserdefinedSymbols/>
+  <Comments>=========================================
+Game Title    : DARK SOULS REMASTERED
+Game Version  : 1.03
+Table Version : 1.0.0
+Cheat Engine  : 7.4
+Date          : 15/09/2022
+Author        : Mi5hmasH
+=========================================
+</Comments>
+</CheatTable>
