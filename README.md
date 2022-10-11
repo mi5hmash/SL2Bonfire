@@ -76,3 +76,6 @@ The second issue is when the previous character's name was longer than the new o
 All the problems I've encountered during my tests have been fixed on the go. If you find any other issue (hope you won't) then please, feel free to report it [there](https://github.com/mi5hmash/SL2Bonfire/issues).
 # :star: Sources:
 * https://github.com/tremwil/DS3SaveUnpacker
+* https://github.com/lepoco/wpfui
+* https://newagesoldier.com/memory.dll
+* https://github.com/CommunityToolkit/dotnet
