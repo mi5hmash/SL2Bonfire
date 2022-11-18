@@ -10,7 +10,7 @@ This app can **unpack and create SL2 archives** from/for various FromSofrware's 
 ## Supported titles*
 | Game Title                               | Tested Version(s) |
 |------------------------------------------|-------------------|
-| Dark Souls Remastered                    | 1.03              |
+| Dark Souls Remastered                    | 1.03-1.03.1       |
 | Dark Souls II - Scholar of the First Sin | 1.02-1.03         |
 | Dark Souls III                           | 1.15-1.15.1       |
 | Sekiro Shadows Die Twice                 | 1.06              |
